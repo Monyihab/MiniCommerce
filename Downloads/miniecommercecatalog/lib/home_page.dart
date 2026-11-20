@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'product.dart';
 import 'product_data.dart';
 import 'app_colors.dart';
 import 'product_image.dart';
 import 'details_page.dart';
+import 'offer_ticker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +15,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isGridView = true;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void openDetails(Product product) {
     Navigator.push(
@@ -146,10 +153,23 @@ class _HomePageState extends State<HomePage> {
           'AAST Shopping Catalog',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back to Welcome',
-          onPressed: () => Navigator.pop(context),
+        leadingWidth: 110,
+        leading: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              tooltip: 'Back to Login',
+              onPressed: () => Navigator.pop(context),
+            ),
+            Image.asset(
+              'assets/AAST.png',
+              height: 32,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.school, color: Colors.white);
+              },
+            ),
+          ],
         ),
         actions: [
           IconButton(
@@ -165,69 +185,98 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
+      body: Column(
         children: [
-          const Text(
-            'Welcome to AAST Shopping',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: navy,
-            ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Select a product to see its details.',
-            style: TextStyle(color: Colors.black54),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Our Products',
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: navy,
+          const OfferTicker(),
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  'assets/BlackCommerce.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: navy);
+                  },
+                ),
+                Container(
+                  color: Colors.black.withValues(alpha: 0.30),
+                ),
+                Scrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  interactive: true,
+                  child: ListView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(12, 12, 20, 12),
+                    children: [
+                      const Text(
+                        'Welcome to AAST Shopping',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Select a product to see its details.',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Our Products',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '$productCount items',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      if (isGridView)
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: productCount,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columnCount,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 0.72,
+                          ),
+                          itemBuilder: (context, index) {
+                            final product = productAt(index);
+                            return buildProductCard(product);
+                          },
+                        )
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: productCount,
+                          itemBuilder: (context, index) {
+                            final product = productAt(index);
+                            return buildProductListTile(product);
+                          },
+                        ),
+                    ],
                   ),
                 ),
-              ),
-              Text(
-                '$productCount items',
-                style: const TextStyle(color: Colors.grey),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          if (isGridView)
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: productCount,
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columnCount,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.72,
-              ),
-              itemBuilder: (context, index) {
-                final product = productAt(index);
-                return buildProductCard(product);
-              },
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: productCount,
-              itemBuilder: (context, index) {
-                final product = productAt(index);
-                return buildProductListTile(product);
-              },
+              ],
             ),
+          ),
         ],
       ),
     );

@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
-import 'home_page.dart';
+import 'login_page.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -29,10 +28,25 @@ class WelcomePage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.shopping_bag_rounded,
-                      color: Colors.white,
-                      size: 65,
+                    ColorFiltered(
+                      colorFilter: const ColorFilter.matrix(<double>[
+                        1, 0, 0, 0, 0,
+                        0, 1, 0, 0, 0,
+                        0, 0, 1, 0, 0,
+                        -0.6, -0.6, -0.6, 1.8, 0,
+                      ]),
+                      child: Image.asset(
+                        'assets/AAST.png',
+                        height: 120,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.school,
+                            color: Colors.white,
+                            size: 65,
+                          );
+                        },
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const Text(
@@ -67,7 +81,7 @@ class WelcomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HomePage(),
+                            builder: (context) => const LoginPage(),
                           ),
                         );
                       },
