@@ -32,14 +32,132 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget buildTransparentLogo({double height = 60}) {
+    return ColorFiltered(
+      colorFilter: const ColorFilter.matrix(<double>[
+        1, 0, 0, 0, 0,
+        0, 1, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        -0.6, -0.6, -0.6, 1.8, 0,
+      ]),
+      child: Image.asset(
+        'assets/AAST.png',
+        height: height,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.school, color: Colors.white, size: height);
+        },
+      ),
+    );
+  }
+
+  Widget buildHeaderBox() {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: navy,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.15),
+        ),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(width: 6, color: red),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        buildTransparentLogo(height: 60),
+                        const SizedBox(width: 14),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome to AAST Shopping',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                'Select a product to see its details.',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Divider(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      height: 1,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Our Products',
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: red,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '$productCount items',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildProductCard(Product product) {
     return Card(
-      color: Colors.white,
-      elevation: 3,
+      color: navy,
+      elevation: 4,
       margin: const EdgeInsets.all(5),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: Colors.white.withValues(alpha: 0.15),
+        ),
       ),
       child: InkWell(
         onTap: () => openDetails(product),
@@ -65,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: navy,
+                  color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -104,19 +222,31 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildProductListTile(Product product) {
     return Card(
-      color: Colors.white,
+      color: navy,
+      elevation: 4,
       margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: Colors.white.withValues(alpha: 0.15),
+        ),
+      ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(10),
-        leading: SizedBox(
+        leading: Container(
           width: 75,
           height: 75,
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: lightBackground,
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: productImage(product, iconSize: 35),
         ),
         title: Text(
           product.name,
           style: const TextStyle(
-            color: navy,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -129,7 +259,7 @@ class _HomePageState extends State<HomePage> {
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
-          color: navy,
+          color: Colors.white,
           size: 18,
         ),
         onTap: () => openDetails(product),
@@ -211,39 +341,8 @@ class _HomePageState extends State<HomePage> {
                     controller: _scrollController,
                     padding: const EdgeInsets.fromLTRB(12, 12, 20, 12),
                     children: [
-                      const Text(
-                        'Welcome to AAST Shopping',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'Select a product to see its details.',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          const Expanded(
-                            child: Text(
-                              'Our Products',
-                              style: TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '$productCount items',
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
+                      buildHeaderBox(),
+                      const SizedBox(height: 14),
                       if (isGridView)
                         GridView.builder(
                           shrinkWrap: true,

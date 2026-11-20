@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'product.dart';
 import 'app_colors.dart';
@@ -26,82 +25,117 @@ class DetailsPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: Stack(
+        fit: StackFit.expand,
         children: [
+          Image.asset(
+            'assets/BlackCommerce.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(color: navy);
+            },
+          ),
           Container(
-            height: 260,
+            color: Colors.black.withValues(alpha: 0.30),
+          ),
+          ListView(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: productImage(product, iconSize: 80),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Text(
-              product.name,
-              style: const TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: navy,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              product.category,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Text(
-              product.description,
-              style: const TextStyle(
-                fontSize: 17,
-                height: 1.6,
-                color: navy,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 20,
-              bottom: 20,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${product.price.toStringAsFixed(0)} EGP',
-                  style: const TextStyle(
-                    color: red,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+            children: [
+              Container(
+                height: 260,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: lightBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
                   ),
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('Back to Home'),
+                child: productImage(product, iconSize: 80),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: navy,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
                   ),
                 ),
-              ],
-            ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(width: 6, color: red),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.name,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                product.category,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white60,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                product.description,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  height: 1.6,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Divider(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                height: 1,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                '${product.price.toStringAsFixed(0)} EGP',
+                                style: const TextStyle(
+                                  color: red,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: red,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(14),
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('Back to Home'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
