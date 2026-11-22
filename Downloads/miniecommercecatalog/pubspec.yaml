@@ -56,6 +56,7 @@ flutter:
   assets:
     - assets/Welcome.png
     - assets/BlackCommerce.jpg
+    - assets/Promotion.jpg
     - assets/AAST.png
     - assets/LoginImage.jpg
     - assets/fox_body.png
@@ -70,7 +71,6 @@ flutter:
     - assets/CasualShirt.png
     - assets/RunningShoes.png
     - assets/TravelBackpack.png
-
 
 
   # To add assets to your application, add an assets section, like this:

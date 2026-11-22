@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
 import 'app_colors.dart';
+import 'app_state.dart';
 import 'product_image.dart';
+import 'checkout_page.dart';
 
 class DetailsPage extends StatelessWidget {
   final Product product;
@@ -10,6 +12,31 @@ class DetailsPage extends StatelessWidget {
     super.key,
     required this.product,
   });
+
+  void _addToCart(BuildContext context) {
+    cart.add(product);
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('${product.name} added to cart'),
+        action: SnackBarAction(
+          label: 'VIEW CART',
+          textColor: Colors.white,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CheckoutPage(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +51,31 @@ class DetailsPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          ListenableBuilder(
+            listenable: cart,
+            builder: (context, _) {
+              return IconButton(
+                tooltip: 'Cart',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CheckoutPage(),
+                    ),
+                  );
+                },
+                icon: Badge(
+                  isLabelVisible: cart.itemCount > 0,
+                  backgroundColor: navy,
+                  textColor: Colors.white,
+                  label: Text('${cart.itemCount}'),
+                  child: const Icon(Icons.shopping_cart_outlined),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -120,6 +172,27 @@ class DetailsPage extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: red,
                                     foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(14),
+                                  ),
+                                  onPressed: () => _addToCart(context),
+                                  icon: const Icon(Icons.add_shopping_cart),
+                                  label: const Text(
+                                    'Add to Cart',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    side: const BorderSide(
+                                      color: Colors.white54,
+                                    ),
                                     padding: const EdgeInsets.all(14),
                                   ),
                                   onPressed: () => Navigator.pop(context),

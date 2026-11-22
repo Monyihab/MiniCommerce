@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_state.dart';
 import 'home_page.dart';
 import 'fox_avatar.dart';
 
@@ -83,6 +84,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
+      UserSession.signIn(_emailController.text);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,
@@ -94,7 +97,10 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(
+          settings: const RouteSettings(name: '/home'),
+          builder: (context) => const HomePage(),
+        ),
       );
     }
   }
