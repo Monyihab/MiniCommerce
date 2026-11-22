@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_state.dart';
@@ -27,11 +28,361 @@ BoxDecoration glassDecoration({double radius = 24, double alpha = 0.18}) {
   );
 }
 
-/// Shared clock so every page shows the background at the same point of
-/// its motion (no jump when you navigate between pages).
+/// Shared clock: every page shows the sky at the same moment of its
+/// animation, so nothing jumps when you move between pages.
 final Stopwatch _bgClock = Stopwatch()..start();
 
-/// Slowly drifting image background used by every page.
+class _TinyStar {
+  final double x, y, radius, period, phase, maxAlpha;
+  final bool pink;
+
+  const _TinyStar(
+    this.x,
+    this.y,
+    this.radius,
+    this.period,
+    this.phase,
+    this.maxAlpha,
+    this.pink,
+  );
+}
+
+class _BigStar {
+  final double x, y, baseLen, peakLen, period, offset, phase;
+
+  const _BigStar(
+    this.x,
+    this.y,
+    this.baseLen,
+    this.peakLen,
+    this.period,
+    this.offset,
+    this.phase,
+  );
+}
+
+/// Tiny stars that twinkle all the time (positions are fractions 0..1).
+final List<_TinyStar> _tinyStars = () {
+  final r = math.Random(11);
+  return List<_TinyStar>.generate(130, (i) {
+    final size = r.nextDouble();
+    return _TinyStar(
+      r.nextDouble(),
+      r.nextDouble(),
+      0.5 + size * size * 1.2,
+      1.6 + r.nextDouble() * 3.2,
+      r.nextDouble() * math.pi * 2,
+      0.35 + r.nextDouble() * 0.55,
+      r.nextDouble() < 0.3,
+    );
+  });
+}();
+
+/// Larger stars that flash into a neon starburst now and then.
+final List<_BigStar> _bigStars = () {
+  final r = math.Random(5);
+  const cols = 3;
+  const rows = 6;
+  final list = <_BigStar>[];
+  for (var row = 0; row < rows; row++) {
+    for (var col = 0; col < cols; col++) {
+      list.add(
+        _BigStar(
+          (col + 0.15 + r.nextDouble() * 0.7) / cols,
+          (row + 0.15 + r.nextDouble() * 0.7) / rows,
+          6 + r.nextDouble() * 5, // resting ray length
+          34 + r.nextDouble() * 26, // ray length at full flash
+          5 + r.nextDouble() * 4, // seconds between flashes
+          r.nextDouble() * 9, // time offset so they don't flash together
+          r.nextDouble() * math.pi * 2,
+        ),
+      );
+    }
+  }
+  return list;
+}();
+
+void _drawRay(
+  Canvas canvas,
+  Offset c,
+  double len,
+  double w,
+  double angle,
+  Paint paint,
+) {
+  canvas.save();
+  canvas.translate(c.dx, c.dy);
+  canvas.rotate(angle);
+  final path = Path()
+    ..moveTo(-len, 0)
+    ..lineTo(0, -w)
+    ..lineTo(len, 0)
+    ..lineTo(0, w)
+    ..close();
+  canvas.drawPath(path, paint);
+  canvas.restore();
+}
+
+/// The still part of the sky: rose-pink galaxy colours and silky ribbons.
+/// Drawn once, never repaints.
+class _GalaxyBasePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF5E011F),
+            Color(0xFF700228),
+            Color(0xFF5A011E),
+            Color(0xFF9A053E),
+          ],
+          stops: [0, 0.35, 0.65, 1],
+        ).createShader(rect),
+    );
+
+    void glow(double fx, double fy, double fr, Color c) {
+      final center = Offset(size.width * fx, size.height * fy);
+      final radius = size.longestSide * fr;
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..shader = ui.Gradient.radial(
+            center,
+            radius,
+            [c, c.withValues(alpha: 0)],
+          ),
+      );
+    }
+
+    glow(0.12, 0.10, 0.45, const Color(0xFFFF3D7F).withValues(alpha: 0.30));
+    glow(0.90, 0.42, 0.50, const Color(0xFFE8266B).withValues(alpha: 0.22));
+    glow(0.15, 0.92, 0.55, const Color(0xFFFF4D8D).withValues(alpha: 0.28));
+    glow(0.85, 0.95, 0.45, const Color(0xFFFF5C98).withValues(alpha: 0.22));
+
+    Path ribbon(List<double> p, double dy) {
+      return Path()
+        ..moveTo(size.width * p[0], size.height * p[1] + dy)
+        ..cubicTo(
+          size.width * p[2],
+          size.height * p[3] + dy,
+          size.width * p[4],
+          size.height * p[5] + dy,
+          size.width * p[6],
+          size.height * p[7] + dy,
+        );
+    }
+
+    final ribbons = <List<double>>[
+      [-0.05, 0.17, 0.20, 0.15, 0.30, 0.33, 0.70, 0.36],
+      [-0.05, 0.68, 0.25, 0.78, 0.40, 0.95, 0.60, 1.05],
+      [-0.05, 0.78, 0.20, 0.86, 0.30, 1.00, 0.50, 1.08],
+      [1.05, 0.80, 0.80, 0.84, 0.70, 0.95, 0.45, 1.05],
+    ];
+
+    final soft = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 16
+      ..color = const Color(0xFFFF6FA3).withValues(alpha: 0.10)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    final lineA = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = Colors.white.withValues(alpha: 0.30);
+    final lineB = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.9
+      ..color = const Color(0xFFFFB3CF).withValues(alpha: 0.40);
+
+    for (final r in ribbons) {
+      canvas.drawPath(ribbon(r, 4), soft);
+      canvas.drawPath(ribbon(r, 0), lineA);
+      canvas.drawPath(ribbon(r, 9), lineB);
+    }
+
+    // Soft dark corners so the glass cards and white text stand out.
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = ui.Gradient.radial(
+          rect.center,
+          size.longestSide * 0.75,
+          [Colors.transparent, Colors.black.withValues(alpha: 0.35)],
+          [0.55, 1.0],
+        ),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// The moving part of the sky: twinkles, neon starbursts, shooting star.
+class _SkyPainter extends CustomPainter {
+  _SkyPainter(Listenable repaint) : super(repaint: repaint);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final t = _bgClock.elapsedMicroseconds / 1000000.0;
+    final paint = Paint()..isAntiAlias = true;
+
+    // 1) Tiny stars: continuously brighten and dim.
+    for (final s in _tinyStars) {
+      final wave = 0.5 + 0.5 * math.sin(2 * math.pi * t / s.period + s.phase);
+      final b = 0.12 + 0.88 * wave * wave;
+      final c = Offset(s.x * size.width, s.y * size.height);
+      final color = s.pink ? const Color(0xFFFFB3CF) : Colors.white;
+
+      if (s.radius > 1.0) {
+        paint.color = color.withValues(alpha: 0.14 * b);
+        canvas.drawCircle(c, s.radius * 3.2, paint);
+      }
+      paint.color = color.withValues(alpha: s.maxAlpha * b);
+      canvas.drawCircle(c, s.radius * (0.75 + 0.35 * b), paint);
+    }
+
+    // 2) Bigger stars: quick neon flash with white rays, then slow fade.
+    const attack = 0.15;
+    const decay = 1.3;
+    for (final s in _bigStars) {
+      final c = Offset(s.x * size.width, s.y * size.height);
+      final local = (t + s.offset) % s.period;
+
+      double env = 0;
+      if (local < attack) {
+        env = local / attack;
+      } else if (local < attack + decay) {
+        final x = (local - attack) / decay;
+        env = (1 - x) * (1 - x);
+      }
+
+      final rest = 0.40 + 0.12 * math.sin(t * 1.3 + s.phase);
+      final i = math.max(rest, env);
+      final len = s.baseLen * (0.85 + 0.3 * rest) +
+          (s.peakLen - s.baseLen) * env;
+
+      // soft glow
+      final glowR = 12 + 46 * env + 6 * rest;
+      canvas.drawCircle(
+        c,
+        glowR,
+        Paint()
+          ..shader = ui.Gradient.radial(
+            c,
+            glowR,
+            [
+              Colors.white.withValues(alpha: 0.30 * rest + 0.55 * env),
+              const Color(0xFFFF4D8D)
+                  .withValues(alpha: 0.18 * rest + 0.30 * env),
+              const Color(0xFFFF4D8D).withValues(alpha: 0),
+            ],
+            [0, 0.35, 1],
+          ),
+      );
+
+      // pink halo behind the rays
+      paint.color = const Color(0xFFFF4D8D).withValues(alpha: 0.30 * i);
+      _drawRay(canvas, c, len, len * 0.16, 0, paint);
+      _drawRay(canvas, c, len, len * 0.16, math.pi / 2, paint);
+
+      // white rays
+      paint.color = Colors.white.withValues(alpha: 0.55 + 0.45 * i);
+      final w = math.max(0.7, len * 0.05);
+      _drawRay(canvas, c, len, w, 0, paint);
+      _drawRay(canvas, c, len, w, math.pi / 2, paint);
+
+      // short diagonal rays appear only during the flash
+      if (env > 0.04) {
+        paint.color = Colors.white.withValues(alpha: env * 0.85);
+        _drawRay(canvas, c, len * 0.5, w * 0.8, math.pi / 4, paint);
+        _drawRay(canvas, c, len * 0.5, w * 0.8, -math.pi / 4, paint);
+      }
+
+      paint.color = Colors.white.withValues(alpha: 0.7 + 0.3 * i);
+      canvas.drawCircle(c, 1.4 + 2.0 * env, paint);
+    }
+
+    // 3) Shooting star: one streak every 3 seconds.
+    const period = 3.0;
+    const duration = 1.15;
+    final k = (t / period).floor();
+    final p = (t - k * period) / duration;
+
+    if (p >= 0 && p <= 1) {
+      final r = math.Random(k * 7919 + 13);
+      final goLeft = r.nextDouble() < 0.75;
+      final angle = 0.40 + r.nextDouble() * 0.35;
+      final dir = Offset(
+        goLeft ? -math.cos(angle) : math.cos(angle),
+        math.sin(angle),
+      );
+      final start = Offset(
+        size.width *
+            (goLeft ? 0.45 + 0.55 * r.nextDouble() : 0.55 * r.nextDouble()),
+        size.height * (0.02 + 0.30 * r.nextDouble()),
+      );
+
+      final travel = size.width * 0.85 + 180;
+      final e = 1 - (1 - p) * (1 - p);
+      final head = start + dir * (travel * e);
+      final tailLen = 130 + 70 * math.sin(math.pi * p);
+      final tail = head - dir * tailLen;
+      final fade = p < 0.15 ? p / 0.15 : (p > 0.6 ? (1 - p) / 0.4 : 1.0);
+
+      canvas.drawLine(
+        head,
+        tail,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = 7
+          ..shader = ui.Gradient.linear(head, tail, [
+            const Color(0xFFFF4D8D).withValues(alpha: 0.35 * fade),
+            const Color(0xFFFF4D8D).withValues(alpha: 0),
+          ]),
+      );
+      canvas.drawLine(
+        head,
+        tail,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = 2.4
+          ..shader = ui.Gradient.linear(head, tail, [
+            Colors.white.withValues(alpha: fade),
+            Colors.white.withValues(alpha: 0),
+          ]),
+      );
+      canvas.drawCircle(
+        head,
+        14,
+        Paint()
+          ..shader = ui.Gradient.radial(
+            head,
+            14,
+            [
+              Colors.white.withValues(alpha: 0.95 * fade),
+              const Color(0xFFFF4D8D).withValues(alpha: 0.4 * fade),
+              const Color(0xFFFF4D8D).withValues(alpha: 0),
+            ],
+            [0, 0.4, 1],
+          ),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Rose-pink galaxy background used by every page.
+/// Only this layer animates; the page content on top never moves.
 class GradientBackground extends StatefulWidget {
   const GradientBackground({super.key});
 
@@ -41,13 +392,7 @@ class GradientBackground extends StatefulWidget {
 
 class _GradientBackgroundState extends State<GradientBackground>
     with SingleTickerProviderStateMixin {
-  // How long one full drift loop takes. Bigger = slower.
-  static const double _loopSeconds = 40;
-  // How far the image travels (fraction of screen width / height).
-  static const double _driftX = 0.10;
-  static const double _driftY = 0.05;
-
-  // Only used to repaint every frame; the position comes from _bgClock.
+  // Only used to repaint every frame; the sky reads time from _bgClock.
   late final AnimationController _ticker = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 1),
@@ -61,75 +406,25 @@ class _GradientBackgroundState extends State<GradientBackground>
 
   @override
   Widget build(BuildContext context) {
-    final image = SizedBox.expand(
-      child: Image.asset(
-        'assets/Background.jpg',
-        fit: BoxFit.cover,
-        filterQuality: FilterQuality.medium,
-        errorBuilder: (context, error, stackTrace) {
-          return const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF76B7F),
-                  Color(0xFFB30B27),
-                  Color(0xFF4A0B24),
-                ],
+    return IgnorePointer(
+      child: RepaintBoundary(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            RepaintBoundary(
+              child: CustomPaint(
+                painter: _GalaxyBasePainter(),
+                size: Size.infinite,
               ),
             ),
-          );
-        },
-      ),
-    );
-
-    return RepaintBoundary(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          const ColoredBox(color: Color(0xFF3A0B1E)),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return ClipRect(
-                child: AnimatedBuilder(
-                  animation: _ticker,
-                  child: image,
-                  builder: (context, child) {
-                    final t = (_bgClock.elapsedMicroseconds /
-                            (_loopSeconds * 1000000)) %
-                        1.0;
-                    final dx = math.sin(2 * math.pi * t) *
-                        constraints.maxWidth *
-                        _driftX;
-                    final dy = math.sin(4 * math.pi * t) *
-                        constraints.maxHeight *
-                        _driftY;
-                    return Transform.translate(
-                      offset: Offset(dx, dy),
-                      // 1.3x gives spare image around the edges so the
-                      // drift never shows a gap.
-                      child: Transform.scale(scale: 1.3, child: child),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          // Soft dark layer so white text stays readable on the light pink.
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  kDeepRed.withValues(alpha: 0.38),
-                  Colors.black.withValues(alpha: 0.10),
-                ],
+            RepaintBoundary(
+              child: CustomPaint(
+                painter: _SkyPainter(_ticker),
+                size: Size.infinite,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -569,3 +864,4 @@ class CartHeaderButton extends StatelessWidget {
     );
   }
 }
+

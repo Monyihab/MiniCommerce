@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_theme.dart';
@@ -30,15 +29,12 @@ class _ProfilePageState extends State<ProfilePage> {
         emptyMessage: 'Name cannot be empty',
       ),
     );
-
     if (!mounted || value == null) {
       return;
     }
-
     setState(() {
       UserSession.name = value;
     });
-
     _snack('Name updated');
   }
 
@@ -52,15 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
         emptyMessage: 'Address cannot be empty',
       ),
     );
-
     if (!mounted || value == null) {
       return;
     }
-
     setState(() {
       UserSession.address = value;
     });
-
     _snack('Address saved');
   }
 
@@ -69,11 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => const _PasswordDialog(),
     );
-
     if (!mounted || changed != true) {
       return;
     }
-
     _snack('Password updated');
   }
 
@@ -109,9 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (context) => const WelcomePage(),
-      ),
+      MaterialPageRoute(builder: (context) => const WelcomePage()),
       (route) => false,
     );
   }
@@ -121,9 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SafeArea(
         child: Padding(
@@ -208,15 +195,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _trackOrder() {
     if (orderHistory.isEmpty) {
-      _snack(
-        'You have no orders to track yet',
-        color: navy,
-      );
+      _snack('You have no orders to track yet', color: navy);
       return;
     }
 
     final latest = orderHistory.first;
-
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -239,9 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _openCart() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const CheckoutPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const CheckoutPage()),
     );
   }
 
@@ -251,10 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
-        decoration: glassDecoration(
-          radius: 24,
-          alpha: 0.18,
-        ),
+        decoration: glassDecoration(radius: 24, alpha: 0.18),
         child: Center(
           child: Text(
             label,
@@ -278,19 +256,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: glassDecoration(
-        radius: 22,
-        alpha: 0.18,
-      ),
+      decoration: glassDecoration(radius: 22, alpha: 0.18),
       child: Material(
         type: MaterialType.transparency,
         child: ListTile(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(22),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14),
           leading: Container(
             width: 42,
             height: 42,
@@ -298,32 +271,17 @@ class _ProfilePageState extends State<ProfilePage> {
               shape: BoxShape.circle,
               color: Colors.white.withValues(alpha: 0.22),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 22,
-            ),
+            child: Icon(icon, color: Colors.white, size: 22),
           ),
           title: Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 17),
           ),
           subtitle: subtitle == null
               ? null
-              : Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                  ),
-                ),
+              : Text(subtitle, style: const TextStyle(color: Colors.white70)),
           trailing: trailing ??
-              const Icon(
-                Icons.chevron_right,
-                color: Colors.white,
-              ),
+              const Icon(Icons.chevron_right, color: Colors.white),
           onTap: onTap,
         ),
       ),
@@ -332,9 +290,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final initial = UserSession.name.isEmpty
-        ? '?'
-        : UserSession.name[0].toUpperCase();
+    final initial =
+        UserSession.name.isEmpty ? '?' : UserSession.name[0].toUpperCase();
 
     return GlassPage(
       maxWidth: 600,
@@ -351,11 +308,7 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 28,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.school,
-                  color: kPink,
-                  size: 28,
-                );
+                return const Icon(Icons.school, color: kPink, size: 28);
               },
             ),
           ),
@@ -380,24 +333,16 @@ class _ProfilePageState extends State<ProfilePage> {
           borderRadius: BorderRadius.circular(25),
           child: Container(
             height: 50,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.22),
               borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                Icon(Icons.logout, color: Colors.white, size: 20),
                 SizedBox(width: 6),
                 Text(
                   'Logout',
@@ -469,9 +414,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ? 'No email'
                                   : UserSession.email,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                              ),
+                              style: const TextStyle(color: Colors.white70),
                             ),
                           ),
                         ],
@@ -484,37 +427,17 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 22),
             Row(
               children: [
-                Expanded(
-                  child: _tile(
-                    'Your Order',
-                    _showOrders,
-                  ),
-                ),
+                Expanded(child: _tile('Your Order', _showOrders)),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _tile(
-                    'Your Cart',
-                    _openCart,
-                  ),
-                ),
+                Expanded(child: _tile('Your Cart', _openCart)),
               ],
             ),
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(
-                  child: _tile(
-                    'Coupons',
-                    _showCoupons,
-                  ),
-                ),
+                Expanded(child: _tile('Coupons', _showCoupons)),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _tile(
-                    'Track Order',
-                    _trackOrder,
-                  ),
-                ),
+                Expanded(child: _tile('Track Order', _trackOrder)),
               ],
             ),
             const SectionTitle('Account Settings'),
@@ -563,8 +486,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               onTap: () {
                 setState(() {
-                  UserSession.notifications =
-                      !UserSession.notifications;
+                  UserSession.notifications = !UserSession.notifications;
                 });
               },
             ),
@@ -589,13 +511,11 @@ class _TextEditDialog extends StatefulWidget {
   });
 
   @override
-  State<_TextEditDialog> createState() =>
-      _TextEditDialogState();
+  State<_TextEditDialog> createState() => _TextEditDialogState();
 }
 
 class _TextEditDialogState extends State<_TextEditDialog> {
   final _formKey = GlobalKey<FormState>();
-
   late final TextEditingController _controller =
       TextEditingController(text: widget.initial);
 
@@ -607,10 +527,7 @@ class _TextEditDialogState extends State<_TextEditDialog> {
 
   void _save() {
     if (_formKey.currentState!.validate()) {
-      Navigator.pop(
-        context,
-        _controller.text.trim(),
-      );
+      Navigator.pop(context, _controller.text.trim());
     }
   }
 
@@ -660,15 +577,13 @@ class _PasswordDialog extends StatefulWidget {
   const _PasswordDialog();
 
   @override
-  State<_PasswordDialog> createState() =>
-      _PasswordDialogState();
+  State<_PasswordDialog> createState() => _PasswordDialogState();
 }
 
 class _PasswordDialogState extends State<_PasswordDialog> {
   final _formKey = GlobalKey<FormState>();
   final _newController = TextEditingController();
   final _confirmController = TextEditingController();
-
   bool _obscure = true;
 
   @override
@@ -703,9 +618,7 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscure
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+                    _obscure ? Icons.visibility_off : Icons.visibility,
                   ),
                   onPressed: () {
                     setState(() {
@@ -718,11 +631,9 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a new password';
                 }
-
                 if (value.length < 6) {
                   return 'Password must be at least 6 characters';
                 }
-
                 return null;
               },
             ),
@@ -740,7 +651,6 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 if (value != _newController.text) {
                   return 'Passwords do not match';
                 }
-
                 return null;
               },
               onFieldSubmitted: (_) => _save(),
@@ -759,7 +669,7 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             foregroundColor: Colors.white,
           ),
           onPressed: _save,
-          child: const Text('Save Password'),
+          child: const Text('Update'),
         ),
       ],
     );
