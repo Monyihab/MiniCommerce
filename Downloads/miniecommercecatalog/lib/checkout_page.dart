@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'app_theme.dart';
 import 'app_state.dart';
-import 'white_card.dart';
 import 'product_image.dart';
 import 'order_confirmation_page.dart';
 
@@ -94,7 +93,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             child: Icon(
               canDecrease ? Icons.remove : Icons.delete_outline,
               size: 18,
-              color: canDecrease ? navy : red,
+              color: Colors.white,
             ),
           ),
         ),
@@ -102,14 +101,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
           constraints: const BoxConstraints(minWidth: 40),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black26),
-            borderRadius: BorderRadius.circular(8),
+            color: Colors.white.withValues(alpha: 0.16),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             '${item.quantity}',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: navy,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -119,7 +119,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           customBorder: const CircleBorder(),
           child: const Padding(
             padding: EdgeInsets.all(6),
-            child: Icon(Icons.add, size: 18, color: navy),
+            child: Icon(Icons.add, size: 18, color: Colors.white),
           ),
         ),
       ],
@@ -127,7 +127,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _itemCard(CartItem item) {
-    return WhiteCard(
+    return GlassCard(
       bottomMargin: 12,
       padding: const EdgeInsets.all(12),
       child: Row(
@@ -137,8 +137,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
             height: 84,
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: lightBackground,
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
             ),
             child: productImage(item.product, iconSize: 32),
           ),
@@ -152,7 +152,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: navy,
+                    color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -160,13 +160,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 const SizedBox(height: 4),
                 Text(
                   item.product.category,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   egp(item.total),
                   style: const TextStyle(
-                    color: red,
+                    color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -181,7 +181,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _shippingCard() {
-    return WhiteCard(
+    return GlassCard(
       child: Row(
         children: [
           Expanded(
@@ -191,7 +191,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 Text(
                   'Shipping: ${egp(cart.shipping)}',
                   style: const TextStyle(
-                    color: navy,
+                    color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -199,12 +199,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 const SizedBox(height: 4),
                 const Text(
                   shippingName,
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.white70),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.local_shipping_outlined, color: red),
+          const Icon(Icons.local_shipping_outlined, color: Colors.white),
         ],
       ),
     );
@@ -213,7 +213,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _discountCard() {
     final applied = cart.appliedCode;
 
-    return WhiteCard(
+    return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,33 +230,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   controller: _codeController,
                   textCapitalization: TextCapitalization.characters,
                   onSubmitted: (_) => _applyCode(),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    hintText: 'Discount Code (try $discountCode)',
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
+                  decoration: glassInput(
+                    dense: true,
+                    radius: 24,
+                    hint: 'Discount Code (try $discountCode)',
                     errorText: _codeError,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 15,
-                    ),
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(10),
-                      ),
-                    ),
                   ),
                 ),
               ),
+              const SizedBox(width: 10),
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: navy,
-                    foregroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.horizontal(
-                        right: Radius.circular(10),
-                      ),
-                    ),
+                  style: whiteButtonStyle(
                     padding: const EdgeInsets.symmetric(horizontal: 22),
                   ),
                   onPressed: _applyCode,
@@ -274,12 +262,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
               label: Text(
                 '$applied  (-10%)',
                 style: const TextStyle(
-                  color: navy,
+                  color: kPink,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
               ),
               backgroundColor: Colors.white,
+              deleteIconColor: kPink,
+              side: BorderSide.none,
               deleteIcon: const Icon(Icons.close, size: 14),
               onDeleted: cart.removeCode,
             ),
@@ -303,7 +293,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             child: Text(
               label,
               style: TextStyle(
-                color: navy,
+                color: Colors.white,
                 fontSize: bold ? 17 : 15,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
@@ -312,7 +302,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           Text(
             value,
             style: TextStyle(
-              color: color ?? navy,
+              color: color ?? Colors.white,
               fontSize: bold ? 18 : 15,
               fontWeight: bold ? FontWeight.bold : FontWeight.w500,
             ),
@@ -323,7 +313,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _summaryCard() {
-    return WhiteCard(
+    return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -337,194 +327,141 @@ class _CheckoutPageState extends State<CheckoutPage> {
             _summaryRow(
               'Discount',
               '- ${egp(cart.discount)}',
-              color: Colors.green,
+              color: kSoftGreen,
             ),
           _summaryRow('Shipping', egp(cart.shipping)),
-          const Divider(height: 20),
-          _summaryRow('Total', egp(cart.total), bold: true, color: red),
+          Divider(height: 20, color: Colors.white.withValues(alpha: 0.25)),
+          _summaryRow('Total', egp(cart.total), bold: true, color: Colors.white),
         ],
       ),
     );
   }
 
   Widget _bottomBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, -3),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Amount to be paid',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          egp(cart.total),
-                          style: const TextStyle(
-                            color: navy,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 3,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: red,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: _placeOrder,
-                      child: const Text(
-                        'Place Order',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _emptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: WhiteCard(
-            padding: const EdgeInsets.all(28),
+    return GlassBottomBar(
+      maxWidth: 700,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.shopping_cart_outlined,
-                  color: navy,
-                  size: 56,
-                ),
-                const SizedBox(height: 12),
                 const Text(
-                  'Your cart is empty',
-                  style: TextStyle(
-                    color: navy,
+                  'Amount to be paid',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  egp(cart.total),
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Add some products to get started.',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.storefront),
-                    label: const Text('Browse Products'),
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 3,
+            child: ElevatedButton(
+              style: whiteButtonStyle(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: _placeOrder,
+              child: const Text(
+                'Place Order',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyState() {
+    return GlassScrollView(
+      centered: true,
+      maxWidth: 420,
+      child: GlassCard(
+        bottomMargin: 0,
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.shopping_cart_outlined,
+              color: Colors.white,
+              size: 56,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Your cart is empty',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Add some products to get started.',
+              style: TextStyle(color: Colors.white70),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: whiteButtonStyle(padding: const EdgeInsets.all(14)),
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.storefront),
+                label: const Text(
+                  'Browse Products',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _content() {
-    return Column(
-      children: [
-        Expanded(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  ...cart.items.map(_itemCard),
-                  _shippingCard(),
-                  _discountCard(),
-                  _summaryCard(),
-                ],
-              ),
-            ),
-          ),
-        ),
-        _bottomBar(),
-      ],
+    return GlassScrollView(
+      maxWidth: 700,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ...cart.items.map(_itemCard),
+          _shippingCard(),
+          _discountCard(),
+          _summaryCard(),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: lightBackground,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: navy,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: const Text(
-          'Checkout',
-          style: TextStyle(color: navy, fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          tooltip: 'Back',
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: ListenableBuilder(
-        listenable: cart,
-        builder: (context, _) {
-          if (cart.isEmpty) {
-            return _emptyState();
-          }
-          return _content();
-        },
-      ),
+    return ListenableBuilder(
+      listenable: cart,
+      builder: (context, _) {
+        final empty = cart.isEmpty;
+        return GlassPage(
+          title: 'Checkout',
+          maxWidth: 700,
+          bottomBar: empty ? null : _bottomBar(),
+          body: empty ? _emptyState() : _content(),
+        );
+      },
     );
   }
 }

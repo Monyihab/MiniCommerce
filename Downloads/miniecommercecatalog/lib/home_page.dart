@@ -11,6 +11,7 @@ import 'details_page.dart';
 import 'checkout_page.dart';
 import 'profile_page.dart';
 import 'glass_scrollbar.dart';
+import 'app_theme.dart';
 
 const Color _pink = Color(0xFFFF1744);
 const Color _deepRed = Color(0xFFB30B27);
@@ -339,60 +340,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _blob(double size, Color color) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            color.withValues(alpha: 0.55),
-            color.withValues(alpha: 0),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackground() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFE8173A),
-                Color(0xFFB30B27),
-                Color(0xFFEF2F52),
-                Color(0xFF9B0A22),
-              ],
-              stops: [0, 0.35, 0.7, 1],
-            ),
-          ),
-        ),
-        Positioned(
-          top: -80,
-          left: -60,
-          child: _blob(260, const Color(0xFFFF4D6D)),
-        ),
-        Positioned(
-          top: 320,
-          right: -110,
-          child: _blob(320, const Color(0xFFFF2D55)),
-        ),
-        Positioned(
-          bottom: -100,
-          left: -40,
-          child: _blob(300, const Color(0xFFFF5C7A)),
-        ),
-      ],
     );
   }
 
@@ -1040,6 +987,7 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
         child: Center(
+          heightFactor: 1,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: ListenableBuilder(
@@ -1125,7 +1073,7 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            _buildBackground(),
+            const GradientBackground(),
             SafeArea(
               bottom: false,
               child: GlassScrollbar(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'welcome_page.dart';
 import 'app_colors.dart';
+import 'app_theme.dart';
 
 void main() {
   runApp(const MyShop());
@@ -15,15 +16,35 @@ class MyShop extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'AAST Shopping Catalog',
       theme: ThemeData(
-        scaffoldBackgroundColor: lightBackground,
+        scaffoldBackgroundColor: kDeepRed,
         colorScheme: ColorScheme.fromSeed(
           seedColor: red,
           primary: red,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: red,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
           centerTitle: true,
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          titleTextStyle: const TextStyle(
+            color: navy,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
         scrollbarTheme: ScrollbarThemeData(
           thumbColor: WidgetStateProperty.all(red),

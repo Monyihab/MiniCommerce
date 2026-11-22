@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_theme.dart';
 import 'app_state.dart';
 import 'checkout_page.dart';
 import 'welcome_page.dart';
@@ -28,12 +30,15 @@ class _ProfilePageState extends State<ProfilePage> {
         emptyMessage: 'Name cannot be empty',
       ),
     );
+
     if (!mounted || value == null) {
       return;
     }
+
     setState(() {
       UserSession.name = value;
     });
+
     _snack('Name updated');
   }
 
@@ -47,12 +52,15 @@ class _ProfilePageState extends State<ProfilePage> {
         emptyMessage: 'Address cannot be empty',
       ),
     );
+
     if (!mounted || value == null) {
       return;
     }
+
     setState(() {
       UserSession.address = value;
     });
+
     _snack('Address saved');
   }
 
@@ -61,9 +69,11 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => const _PasswordDialog(),
     );
+
     if (!mounted || changed != true) {
       return;
     }
+
     _snack('Password updated');
   }
 
@@ -99,7 +109,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const WelcomePage()),
+      MaterialPageRoute(
+        builder: (context) => const WelcomePage(),
+      ),
       (route) => false,
     );
   }
@@ -109,7 +121,9 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
       ),
       builder: (context) => SafeArea(
         child: Padding(
@@ -194,11 +208,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _trackOrder() {
     if (orderHistory.isEmpty) {
-      _snack('You have no orders to track yet', color: navy);
+      _snack(
+        'You have no orders to track yet',
+        color: navy,
+      );
       return;
     }
 
     final latest = orderHistory.first;
+
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -221,45 +239,31 @@ class _ProfilePageState extends State<ProfilePage> {
   void _openCart() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CheckoutPage()),
-    );
-  }
-
-  Widget _tile(String label, VoidCallback onTap) {
-    return Material(
-      color: Colors.white,
-      elevation: 1,
-      shadowColor: Colors.black26,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          child: Center(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: navy,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+      MaterialPageRoute(
+        builder: (context) => const CheckoutPage(),
       ),
     );
   }
 
-  Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 26, bottom: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: navy,
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
+  Widget _tile(String label, VoidCallback onTap) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        decoration: glassDecoration(
+          radius: 24,
+          alpha: 0.18,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );
@@ -272,190 +276,299 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget? trailing,
     VoidCallback? onTap,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-      leading: Icon(icon, color: navy, size: 28),
-      title: Text(
-        title,
-        style: const TextStyle(color: navy, fontSize: 17),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: glassDecoration(
+        radius: 22,
+        alpha: 0.18,
       ),
-      subtitle: subtitle == null
-          ? null
-          : Text(subtitle, style: const TextStyle(color: Colors.grey)),
-      trailing: trailing ?? const Icon(Icons.chevron_right, color: navy),
-      onTap: onTap,
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+          ),
+          leading: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.22),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+            ),
+          ),
+          subtitle: subtitle == null
+              ? null
+              : Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                  ),
+                ),
+          trailing: trailing ??
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.white,
+              ),
+          onTap: onTap,
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final initial =
-        UserSession.name.isEmpty ? '?' : UserSession.name[0].toUpperCase();
+    final initial = UserSession.name.isEmpty
+        ? '?'
+        : UserSession.name[0].toUpperCase();
 
-    return Scaffold(
-      backgroundColor: lightBackground,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: navy,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          tooltip: 'Back',
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            Image.asset(
+    return GlassPage(
+      maxWidth: 600,
+      titleWidget: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Image.asset(
               'assets/AAST.png',
-              height: 32,
+              height: 28,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.school, color: navy);
+                return const Icon(
+                  Icons.school,
+                  color: kPink,
+                  size: 28,
+                );
               },
             ),
-            const SizedBox(width: 10),
-            const Text(
+          ),
+          const SizedBox(width: 10),
+          const Flexible(
+            child: Text(
               'My Profile',
-              style: TextStyle(color: navy, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton.icon(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout, color: red, size: 20),
-            label: const Text(
-              'Logout',
-              style: TextStyle(color: red, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
+      actions: [
+        InkWell(
+          onTap: _logout,
+          borderRadius: BorderRadius.circular(25),
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      body: GlassScrollView(
+        maxWidth: 600,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: CircleAvatar(
                     radius: 34,
-                    backgroundColor: red,
+                    backgroundColor: Colors.white,
                     child: Text(
                       initial,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: kPink,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hello, ${UserSession.name}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: navy,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                          ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hello, ${UserSession.name}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.email_outlined,
-                              color: Colors.grey,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                UserSession.email.isEmpty
-                                    ? 'No email'
-                                    : UserSession.email,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.email_outlined,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              UserSession.email.isEmpty
+                                  ? 'No email'
+                                  : UserSession.email,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white70,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 22),
-              Row(
-                children: [
-                  Expanded(child: _tile('Your Order', _showOrders)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _tile('Your Cart', _openCart)),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(child: _tile('Coupons', _showCoupons)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _tile('Track Order', _trackOrder)),
-                ],
-              ),
-              _sectionTitle('Account Settings'),
-              _settingTile(
-                icon: Icons.person_outline,
-                title: 'Edit Profile',
-                subtitle: UserSession.name,
-                onTap: _editName,
-              ),
-              _settingTile(
-                icon: Icons.location_on_outlined,
-                title: 'Saved Addresses',
-                subtitle: UserSession.address.isEmpty
-                    ? 'Not set'
-                    : UserSession.address,
-                onTap: _editAddress,
-              ),
-              _settingTile(
-                icon: Icons.lock_outline,
-                title: 'Change Password',
-                onTap: _changePassword,
-              ),
-              _settingTile(
-                icon: Icons.notifications_none,
-                title: 'Notifications Settings',
-                trailing: Switch(
-                  value: UserSession.notifications,
-                  thumbColor: WidgetStateProperty.all(Colors.white),
-                  trackColor: WidgetStateProperty.resolveWith(
-                    (states) => states.contains(WidgetState.selected)
-                        ? red
-                        : Colors.black26,
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      UserSession.notifications = value;
-                    });
-                  },
                 ),
-                onTap: () {
+              ],
+            ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: _tile(
+                    'Your Order',
+                    _showOrders,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _tile(
+                    'Your Cart',
+                    _openCart,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _tile(
+                    'Coupons',
+                    _showCoupons,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _tile(
+                    'Track Order',
+                    _trackOrder,
+                  ),
+                ),
+              ],
+            ),
+            const SectionTitle('Account Settings'),
+            _settingTile(
+              icon: Icons.person_outline,
+              title: 'Edit Profile',
+              subtitle: UserSession.name,
+              onTap: _editName,
+            ),
+            _settingTile(
+              icon: Icons.location_on_outlined,
+              title: 'Saved Addresses',
+              subtitle: UserSession.address.isEmpty
+                  ? 'Not set'
+                  : UserSession.address,
+              onTap: _editAddress,
+            ),
+            _settingTile(
+              icon: Icons.lock_outline,
+              title: 'Change Password',
+              onTap: _changePassword,
+            ),
+            _settingTile(
+              icon: Icons.notifications_none,
+              title: 'Notifications Settings',
+              trailing: Switch(
+                value: UserSession.notifications,
+                thumbColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.white
+                      : Colors.white70,
+                ),
+                trackColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? kDeepRed
+                      : Colors.white.withValues(alpha: 0.15),
+                ),
+                trackOutlineColor: WidgetStateProperty.all(
+                  Colors.white.withValues(alpha: 0.5),
+                ),
+                onChanged: (value) {
                   setState(() {
-                    UserSession.notifications = !UserSession.notifications;
+                    UserSession.notifications = value;
                   });
                 },
               ),
-            ],
-          ),
+              onTap: () {
+                setState(() {
+                  UserSession.notifications =
+                      !UserSession.notifications;
+                });
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -476,11 +589,13 @@ class _TextEditDialog extends StatefulWidget {
   });
 
   @override
-  State<_TextEditDialog> createState() => _TextEditDialogState();
+  State<_TextEditDialog> createState() =>
+      _TextEditDialogState();
 }
 
 class _TextEditDialogState extends State<_TextEditDialog> {
   final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _controller =
       TextEditingController(text: widget.initial);
 
@@ -492,7 +607,10 @@ class _TextEditDialogState extends State<_TextEditDialog> {
 
   void _save() {
     if (_formKey.currentState!.validate()) {
-      Navigator.pop(context, _controller.text.trim());
+      Navigator.pop(
+        context,
+        _controller.text.trim(),
+      );
     }
   }
 
@@ -542,13 +660,15 @@ class _PasswordDialog extends StatefulWidget {
   const _PasswordDialog();
 
   @override
-  State<_PasswordDialog> createState() => _PasswordDialogState();
+  State<_PasswordDialog> createState() =>
+      _PasswordDialogState();
 }
 
 class _PasswordDialogState extends State<_PasswordDialog> {
   final _formKey = GlobalKey<FormState>();
   final _newController = TextEditingController();
   final _confirmController = TextEditingController();
+
   bool _obscure = true;
 
   @override
@@ -583,7 +703,9 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscure ? Icons.visibility_off : Icons.visibility,
+                    _obscure
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                   onPressed: () {
                     setState(() {
@@ -596,9 +718,11 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a new password';
                 }
+
                 if (value.length < 6) {
                   return 'Password must be at least 6 characters';
                 }
+
                 return null;
               },
             ),
@@ -616,6 +740,7 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                 if (value != _newController.text) {
                   return 'Passwords do not match';
                 }
+
                 return null;
               },
               onFieldSubmitted: (_) => _save(),
@@ -634,7 +759,7 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             foregroundColor: Colors.white,
           ),
           onPressed: _save,
-          child: const Text('Update'),
+          child: const Text('Save Password'),
         ),
       ],
     );

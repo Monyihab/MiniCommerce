@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'app_theme.dart';
 import 'app_state.dart';
 import 'home_page.dart';
 import 'fox_avatar.dart';
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
               errorBuilder: (context, error, stackTrace) {
                 return const Icon(
                   Icons.school,
-                  color: navy,
+                  color: Colors.white,
                   size: 56,
                 );
               },
@@ -133,14 +133,14 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: navy,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 6),
             const Text(
               'Login to continue shopping',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: Colors.white70),
             ),
             const SizedBox(height: 24),
             TextFormField(
@@ -149,12 +149,11 @@ class _LoginPageState extends State<LoginPage> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               validator: _validateEmail,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email_outlined),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              style: const TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: glassInput(
+                label: 'Email',
+                prefix: const Icon(Icons.email_outlined),
               ),
             ),
             const SizedBox(height: 16),
@@ -165,10 +164,12 @@ class _LoginPageState extends State<LoginPage> {
               textInputAction: TextInputAction.done,
               validator: _validatePassword,
               onFieldSubmitted: (_) => _login(),
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock_outline),
-                suffixIcon: IconButton(
+              style: const TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: glassInput(
+                label: 'Password',
+                prefix: const Icon(Icons.lock_outline),
+                suffix: IconButton(
                   tooltip:
                       _obscurePassword ? 'Show password' : 'Hide password',
                   icon: Icon(
@@ -182,18 +183,11 @@ class _LoginPageState extends State<LoginPage> {
                     });
                   },
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: red,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
+              style: whiteButtonStyle(),
               onPressed: _login,
               child: const Text(
                 'Login',
@@ -222,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
               fit: BoxFit.cover,
               alignment: const Alignment(0.45, 0),
               errorBuilder: (context, error, stackTrace) {
-                return Container(color: navy);
+                return Container(color: kDeepRed);
               },
             ),
             Container(
@@ -232,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    navy.withValues(alpha: 0.35),
+                    kDeepRed.withValues(alpha: 0.45),
                   ],
                 ),
               ),
@@ -266,81 +260,49 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final foxHeight = FoxAvatar.heightFor(_foxWidth);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Login',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          tooltip: 'Back to Welcome',
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            'assets/Welcome.png',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(color: navy);
-            },
-          ),
-          Container(
-            color: Colors.black.withValues(alpha: 0.45),
-          ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth >= 750;
+    return GlassPage(
+      title: 'Login',
+      backTooltip: 'Back to Welcome',
+      maxWidth: 900,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 750;
 
-              return Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: isWide ? 900 : 420,
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: foxHeight - 6),
-                          child: Card(
-                            color: Colors.white,
-                            elevation: 8,
-                            clipBehavior: Clip.antiAlias,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+          return GlassScrollView(
+            centered: true,
+            maxWidth: isWide ? 900 : 420,
+            padding: const EdgeInsets.fromLTRB(16, 8, 24, 24),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: foxHeight - 6),
+                  child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: glassDecoration(radius: 28, alpha: 0.18),
+                    child: isWide
+                        ? SizedBox(
+                            height: 480,
+                            child: Row(
+                              children: [
+                                Expanded(child: _buildForm()),
+                                Expanded(child: _buildSidePhoto()),
+                              ],
                             ),
-                            child: isWide
-                                ? SizedBox(
-                                    height: 480,
-                                    child: Row(
-                                      children: [
-                                        Expanded(child: _buildForm()),
-                                        Expanded(child: _buildSidePhoto()),
-                                      ],
-                                    ),
-                                  )
-                                : _buildForm(),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: _buildFox(isWide),
-                        ),
-                      ],
-                    ),
+                          )
+                        : _buildForm(),
                   ),
                 ),
-              );
-            },
-          ),
-        ],
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildFox(isWide),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

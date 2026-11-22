@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'app_colors.dart';
 
 class OfferTicker extends StatefulWidget {
   const OfferTicker({super.key});
@@ -44,7 +43,7 @@ class _OfferTickerState extends State<OfferTicker>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.local_offer, color: red, size: 18),
+          const Icon(Icons.local_offer, color: Colors.white, size: 18),
           const SizedBox(width: 8),
           const Text(
             'Special offer! ',
@@ -59,15 +58,15 @@ class _OfferTickerState extends State<OfferTicker>
             style: TextStyle(color: Colors.white, fontSize: 15),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              color: red,
-              borderRadius: BorderRadius.circular(6),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
               '30% OFF',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFFFF1744),
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -87,10 +86,10 @@ class _OfferTickerState extends State<OfferTicker>
     return Container(
       height: 40,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: navy,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
         border: Border(
-          bottom: BorderSide(color: red, width: 2),
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.25)),
         ),
       ),
       child: ClipRect(
