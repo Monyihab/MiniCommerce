@@ -308,9 +308,9 @@ class _SkyPainter extends CustomPainter {
       canvas.drawCircle(c, 1.4 + 2.0 * env, paint);
     }
 
-    // 3) Shooting star: one streak every 3 seconds.
-    const period = 3.0;
-    const duration = 1.15;
+    // 3) Shooting star: one streak every 1.5 seconds.
+    const period = 1.5;
+    const duration = 0.9;
     final k = (t / period).floor();
     final p = (t - k * period) / duration;
 
