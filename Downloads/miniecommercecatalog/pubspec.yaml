@@ -58,6 +58,12 @@ flutter:
     - assets/BlackCommerce.jpg
     - assets/AAST.png
     - assets/LoginImage.jpg
+    - assets/fox_body.png
+    - assets/fox_tail.png
+    - assets/fox_ear_left.png
+    - assets/fox_ear_right.png
+    - assets/iris_left.png
+    - assets/iris_right.png
     - assets/SmartWatch.png
     - assets/Headphones.png
     - assets/CoffeMug.png

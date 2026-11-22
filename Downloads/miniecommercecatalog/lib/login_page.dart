@@ -11,6 +11,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  static const double _foxWidth = 170;
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -108,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Image.asset(
               'assets/AAST.png',
-              height: 90,
+              height: 70,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 return const Icon(
@@ -240,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
     final fox = FoxAvatar(
       lookX: look.dx,
       lookY: look.dy,
-      size: 300,
+      width: _foxWidth,
     );
 
     if (isWide) {
@@ -256,6 +258,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final foxHeight = FoxAvatar.heightFor(_foxWidth);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -295,14 +299,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: _buildFox(isWide),
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 118),
+                          padding: EdgeInsets.only(top: foxHeight - 6),
                           child: Card(
                             color: Colors.white,
                             elevation: 8,
@@ -312,7 +310,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             child: isWide
                                 ? SizedBox(
-                                    height: 540,
+                                    height: 480,
                                     child: Row(
                                       children: [
                                         Expanded(child: _buildForm()),
@@ -322,6 +320,12 @@ class _LoginPageState extends State<LoginPage> {
                                   )
                                 : _buildForm(),
                           ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: _buildFox(isWide),
                         ),
                       ],
                     ),
