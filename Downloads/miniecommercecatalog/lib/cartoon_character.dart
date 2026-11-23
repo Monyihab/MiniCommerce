@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// One eye, described in the pixel space of the character image.
 class CharacterEye {
   final double cx;
   final double cy;
@@ -18,21 +17,14 @@ class CharacterEye {
   });
 }
 
-/// A cartoon picture that blinks and (optionally) waves with one arm.
-///
-/// [bodyAsset] is the full picture (without the arm if [armAsset] is used).
-/// [armAsset] must have the same pixel size as [bodyAsset]; it is drawn behind
-/// the body and rotated around [armPivot] (in image pixels) to make it wave.
 class CartoonCharacter extends StatefulWidget {
   final String bodyAsset;
-  final String? armAsset;
   final double imageWidth;
   final double imageHeight;
   final double height;
   final List<CharacterEye> eyes;
   final Color lidColor;
   final Color lashColor;
-  final Offset armPivot;
   final double blinkPhase;
 
   const CartoonCharacter({
@@ -43,8 +35,6 @@ class CartoonCharacter extends StatefulWidget {
     required this.height,
     required this.eyes,
     required this.lidColor,
-    this.armAsset,
-    this.armPivot = Offset.zero,
     this.lashColor = const Color(0xFF5A2E12),
     this.blinkPhase = 0,
   });
@@ -56,11 +46,10 @@ class CartoonCharacter extends StatefulWidget {
 }
 
 class _CartoonCharacterState extends State<CartoonCharacter>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   static const double _lidGrow = 2.5;
 
   late final AnimationController _blink;
-  late final AnimationController _wave;
 
   @override
   void initState() {
@@ -70,41 +59,20 @@ class _CartoonCharacterState extends State<CartoonCharacter>
       duration: const Duration(milliseconds: 4200),
       value: widget.blinkPhase,
     )..repeat();
-
-    _wave = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3200),
-    );
-    if (widget.armAsset != null) {
-      _wave.repeat();
-    }
   }
 
   @override
   void dispose() {
     _blink.dispose();
-    _wave.dispose();
     super.dispose();
   }
 
-  // 0 = eyes open, 1 = eyes closed. A quick blink once per cycle.
   double get _blinkCover {
     final t = _blink.value;
     if (t > 0.90 && t < 0.96) {
       return math.sin((t - 0.90) / 0.06 * math.pi);
     }
     return 0;
-  }
-
-  // Waves for the first part of every cycle, then rests.
-  double get _waveAngle {
-    final t = _wave.value;
-    const active = 0.65;
-    if (t >= active) {
-      return 0;
-    }
-    final p = t / active;
-    return math.sin(p * 2 * math.pi * 3) * 0.2 * math.sin(p * math.pi);
   }
 
   Widget _eyelid(CharacterEye eye, double s, double w, double h, double cover) {
@@ -150,32 +118,17 @@ class _CartoonCharacterState extends State<CartoonCharacter>
     final h = widget.height;
     final w = widget.width;
     final s = h / widget.imageHeight;
-    final pivot = Alignment(
-      widget.armPivot.dx / widget.imageWidth * 2 - 1,
-      widget.armPivot.dy / widget.imageHeight * 2 - 1,
-    );
 
     return SizedBox(
       width: w,
       height: h,
       child: AnimatedBuilder(
-        animation: Listenable.merge([_blink, _wave]),
+        animation: _blink,
         builder: (context, _) {
           final cover = _blinkCover;
 
           return Stack(
             children: [
-              if (widget.armAsset != null)
-                Transform.rotate(
-                  angle: _waveAngle,
-                  alignment: pivot,
-                  child: Image.asset(
-                    widget.armAsset!,
-                    width: w,
-                    height: h,
-                    fit: BoxFit.fill,
-                  ),
-                ),
               Image.asset(
                 widget.bodyAsset,
                 width: w,

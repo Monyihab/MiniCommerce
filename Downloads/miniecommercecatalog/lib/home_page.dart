@@ -604,10 +604,7 @@ class _HomePageState extends State<HomePage> {
             flex: 4,
             child: Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              decoration: productTileDecoration(20),
               child: productImage(promo.product, iconSize: 50),
             ),
           ),
@@ -745,19 +742,20 @@ class _HomePageState extends State<HomePage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: c.asset == null
+                        color: c.asset == null || kTransparentProductImages
                             ? Colors.transparent
                             : Colors.white,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: c.asset == null
                           ? Icon(c.icon, color: Colors.white, size: 40)
-                          : Image.asset(
+                          : assetImage(
                               c.asset!,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(c.icon, color: _pink, size: 36);
-                              },
+                              fallback: Icon(
+                                c.icon,
+                                color: Colors.white,
+                                size: 36,
+                              ),
                             ),
                     ),
                     const SizedBox(height: 8),
@@ -802,10 +800,7 @@ class _HomePageState extends State<HomePage> {
                   Positioned.fill(
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
+                      decoration: productTileDecoration(18),
                       child: productImage(product, iconSize: 40),
                     ),
                   ),

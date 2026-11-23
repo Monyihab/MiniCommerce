@@ -56,17 +56,7 @@ class DetailsPage extends StatelessWidget {
             Container(
               height: 260,
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
+              decoration: productHeroDecoration(),
               child: productImage(product, iconSize: 80),
             ),
             const SizedBox(height: 16),

@@ -136,10 +136,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             width: 84,
             height: 84,
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-            ),
+            decoration: productTileDecoration(18),
             child: productImage(item.product, iconSize: 32),
           ),
           const SizedBox(width: 14),

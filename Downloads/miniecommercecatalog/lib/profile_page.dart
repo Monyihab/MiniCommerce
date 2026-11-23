@@ -4,6 +4,7 @@ import 'app_theme.dart';
 import 'app_state.dart';
 import 'checkout_page.dart';
 import 'welcome_page.dart';
+import 'glass_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -71,21 +72,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _logout() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
+      builder: (context) => GlassDialog(
+        title: 'Logout',
         content: const Text('Are you sure you want to log out?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: red,
-              foregroundColor: Colors.white,
-            ),
+          GlassDialog.cancel(context, result: false),
+          GlassDialog.primary(
+            label: 'Logout',
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Logout'),
           ),
         ],
       ),
@@ -178,15 +172,15 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showCoupons() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Coupons'),
+      builder: (context) => GlassDialog(
+        title: 'Coupons',
         content: const Text(
           '$discountCode: 10% off your order.\nApply it on the checkout screen.',
         ),
         actions: [
-          TextButton(
+          GlassDialog.primary(
+            label: 'Close',
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
           ),
         ],
       ),
@@ -202,17 +196,17 @@ class _ProfilePageState extends State<ProfilePage> {
     final latest = orderHistory.first;
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Track Order'),
+      builder: (context) => GlassDialog(
+        title: 'Track Order',
         content: Text(
           'Order ${latest.number}\n'
           'Status: Processing\n'
           'Estimated delivery: 3-5 working days',
         ),
         actions: [
-          TextButton(
+          GlassDialog.primary(
+            label: 'Close',
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
           ),
         ],
       ),
@@ -533,19 +527,16 @@ class _TextEditDialogState extends State<_TextEditDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.title),
+    return GlassDialog(
+      title: widget.title,
       content: Form(
         key: _formKey,
         child: TextFormField(
           controller: _controller,
           autofocus: true,
-          decoration: InputDecoration(
-            labelText: widget.label,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+          style: const TextStyle(color: Colors.white),
+          cursorColor: Colors.white,
+          decoration: glassInput(label: widget.label),
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
               return widget.emptyMessage;
@@ -556,18 +547,8 @@ class _TextEditDialogState extends State<_TextEditDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: red,
-            foregroundColor: Colors.white,
-          ),
-          onPressed: _save,
-          child: const Text('Save'),
-        ),
+        GlassDialog.cancel(context),
+        GlassDialog.primary(label: 'Save', onPressed: _save),
       ],
     );
   }
@@ -601,8 +582,8 @@ class _PasswordDialogState extends State<_PasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Change Password'),
+    return GlassDialog(
+      title: 'Change Password',
       content: Form(
         key: _formKey,
         child: Column(
@@ -611,12 +592,11 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             TextFormField(
               controller: _newController,
               obscureText: _obscure,
-              decoration: InputDecoration(
-                labelText: 'New password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                suffixIcon: IconButton(
+              style: const TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: glassInput(
+                label: 'New password',
+                suffix: IconButton(
                   icon: Icon(
                     _obscure ? Icons.visibility_off : Icons.visibility,
                   ),
@@ -641,12 +621,9 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             TextFormField(
               controller: _confirmController,
               obscureText: _obscure,
-              decoration: InputDecoration(
-                labelText: 'Confirm password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              style: const TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: glassInput(label: 'Confirm password'),
               validator: (value) {
                 if (value != _newController.text) {
                   return 'Passwords do not match';
@@ -659,18 +636,8 @@ class _PasswordDialogState extends State<_PasswordDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: red,
-            foregroundColor: Colors.white,
-          ),
-          onPressed: _save,
-          child: const Text('Update'),
-        ),
+        GlassDialog.cancel(context),
+        GlassDialog.primary(label: 'Update', onPressed: _save),
       ],
     );
   }
