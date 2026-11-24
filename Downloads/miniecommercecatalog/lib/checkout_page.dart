@@ -4,6 +4,7 @@ import 'app_state.dart';
 import 'product_image.dart';
 import 'order_confirmation_page.dart';
 import 'page_transitions.dart';
+import 'app_snackbar.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -38,11 +39,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     if (ok) {
       _codeController.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text('10% discount applied'),
-        ),
+      showAppSnack(
+        context,
+        '10% discount applied',
+        icon: Icons.local_offer_outlined,
       );
     }
   }

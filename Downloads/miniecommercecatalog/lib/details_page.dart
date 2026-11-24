@@ -5,6 +5,7 @@ import 'app_theme.dart';
 import 'product_image.dart';
 import 'checkout_page.dart';
 import 'page_transitions.dart';
+import 'app_snackbar.dart';
 
 class DetailsPage extends StatelessWidget {
   final Product product;
@@ -24,19 +25,12 @@ class DetailsPage extends StatelessWidget {
   void _addToCart(BuildContext context) {
     cart.add(product);
 
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.green,
-        content: Text('${product.name} added to cart'),
-        action: SnackBarAction(
-          label: 'VIEW CART',
-          textColor: Colors.white,
-          onPressed: () => _openCart(context),
-        ),
-      ),
+    showAppSnack(
+      context,
+      '${product.name} added to cart',
+      icon: Icons.add_shopping_cart,
+      actionLabel: 'VIEW CART',
+      onAction: () => _openCart(context),
     );
   }
 

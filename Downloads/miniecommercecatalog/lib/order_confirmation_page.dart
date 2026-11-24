@@ -70,7 +70,7 @@ class OrderConfirmationPage extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.check_rounded,
-                    color: Colors.green,
+                    color: kPink,
                     size: 56,
                   ),
                 ),

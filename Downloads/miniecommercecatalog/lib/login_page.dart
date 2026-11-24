@@ -5,6 +5,7 @@ import 'home_page.dart';
 import 'fox_avatar.dart';
 import 'page_transitions.dart';
 import 'shiny_logo.dart';
+import 'app_snackbar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -88,13 +89,9 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       UserSession.signIn(_emailController.text);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green,
-          content: Text(
-            'Login successful! Welcome ${_emailController.text.trim()}',
-          ),
-        ),
+      showAppSnack(
+        context,
+        'Login successful! Welcome ${_emailController.text.trim()}',
       );
 
       Navigator.push(

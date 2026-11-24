@@ -13,6 +13,8 @@ import 'profile_page.dart';
 import 'glass_scrollbar.dart';
 import 'app_theme.dart';
 import 'page_transitions.dart';
+import 'guide_message.dart';
+import 'app_snackbar.dart';
 
 const Color _pink = Color(0xFFFF1744);
 const Color _deepRed = Color(0xFFB30B27);
@@ -93,6 +95,7 @@ class _HomePageState extends State<HomePage> {
   int _navIndex = 0;
   int _sort = 0;
   bool _favoritesOnly = false;
+  bool _showGuide = false;
   String _query = '';
 
   @override
@@ -108,6 +111,14 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
+    });
+
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        setState(() {
+          _showGuide = true;
+        });
+      }
     });
   }
 
@@ -210,19 +221,12 @@ class _HomePageState extends State<HomePage> {
   void _addToCart(Product product) {
     cart.add(product);
 
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.green,
-        content: Text('${product.name} added to cart'),
-        action: SnackBarAction(
-          label: 'VIEW CART',
-          textColor: Colors.white,
-          onPressed: _openCart,
-        ),
-      ),
+    showAppSnack(
+      context,
+      '${product.name} added to cart',
+      icon: Icons.shopping_cart_outlined,
+      actionLabel: 'VIEW CART',
+      onAction: _openCart,
     );
   }
 
@@ -1142,6 +1146,26 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            if (_showGuide)
+              Positioned(
+                left: 12,
+                right: 12,
+                bottom: 96 + deviceBottom,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 560),
+                    child: GuideMessage(
+                      onClosed: () {
+                        if (mounted) {
+                          setState(() {
+                            _showGuide = false;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

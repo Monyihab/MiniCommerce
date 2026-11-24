@@ -6,6 +6,7 @@ import 'checkout_page.dart';
 import 'welcome_page.dart';
 import 'glass_dialog.dart';
 import 'page_transitions.dart';
+import 'app_snackbar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,10 +16,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  void _snack(String message, {Color color = Colors.green}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(backgroundColor: color, content: Text(message)),
-    );
+  void _snack(String message, {IconData icon = Icons.check_rounded}) {
+    showAppSnack(context, message, icon: icon);
   }
 
   Future<void> _editName() async {
@@ -56,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       UserSession.address = value;
     });
-    _snack('Address saved');
+    _snack('Address saved', icon: Icons.location_on_outlined);
   }
 
   Future<void> _changePassword() async {
@@ -67,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!mounted || changed != true) {
       return;
     }
-    _snack('Password updated');
+    _snack('Password updated', icon: Icons.lock_outline);
   }
 
   Future<void> _logout() async {
@@ -193,7 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _trackOrder() {
     if (orderHistory.isEmpty) {
-      _snack('You have no orders to track yet', color: navy);
+      _snack('You have no orders to track yet', icon: Icons.info_outline);
       return;
     }
 
