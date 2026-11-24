@@ -12,6 +12,7 @@ import 'checkout_page.dart';
 import 'profile_page.dart';
 import 'glass_scrollbar.dart';
 import 'app_theme.dart';
+import 'page_transitions.dart';
 
 const Color _pink = Color(0xFFFF1744);
 const Color _deepRed = Color(0xFFB30B27);
@@ -180,23 +181,21 @@ class _HomePageState extends State<HomePage> {
   void openDetails(Product product) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => DetailsPage(product: product),
-      ),
+      slideFadeRoute(page: DetailsPage(product: product)),
     );
   }
 
   void _openCart() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CheckoutPage()),
+      slideFadeRoute(page: const CheckoutPage()),
     );
   }
 
   void _openProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ProfilePage()),
+      slideFadeRoute(page: const ProfilePage()),
     );
   }
 

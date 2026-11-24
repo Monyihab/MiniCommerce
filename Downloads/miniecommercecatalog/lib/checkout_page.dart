@@ -3,6 +3,7 @@ import 'app_theme.dart';
 import 'app_state.dart';
 import 'product_image.dart';
 import 'order_confirmation_page.dart';
+import 'page_transitions.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -71,9 +72,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => OrderConfirmationPage(order: order),
-      ),
+      slideFadeRoute(page: OrderConfirmationPage(order: order)),
     );
 
     cart.clear();

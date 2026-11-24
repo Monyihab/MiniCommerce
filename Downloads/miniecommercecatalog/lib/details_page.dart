@@ -4,6 +4,7 @@ import 'app_state.dart';
 import 'app_theme.dart';
 import 'product_image.dart';
 import 'checkout_page.dart';
+import 'page_transitions.dart';
 
 class DetailsPage extends StatelessWidget {
   final Product product;
@@ -16,7 +17,7 @@ class DetailsPage extends StatelessWidget {
   void _openCart(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CheckoutPage()),
+      slideFadeRoute(page: const CheckoutPage()),
     );
   }
 

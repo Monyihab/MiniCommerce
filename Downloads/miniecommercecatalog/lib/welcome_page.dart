@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'login_page.dart';
 import 'app_theme.dart';
 import 'cartoon_character.dart';
+import 'page_transitions.dart';
+import 'shiny_logo.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -36,26 +38,7 @@ class WelcomePage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ColorFiltered(
-            colorFilter: const ColorFilter.matrix(<double>[
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              -0.6, -0.6, -0.6, 1.8, 0,
-            ]),
-            child: Image.asset(
-              'assets/AAST.png',
-              height: 120,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.school,
-                  color: Colors.white,
-                  size: 65,
-                );
-              },
-            ),
-          ),
+          const ShinyLogo(height: 120, fallbackSize: 65),
           const SizedBox(height: 20),
           const Text(
             'AAST Shopping Catalog',
@@ -83,9 +66,7 @@ class WelcomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
+                  slideFadeRoute(page: const LoginPage()),
                 );
               },
               child: const Text(

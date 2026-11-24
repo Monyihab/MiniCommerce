@@ -3,6 +3,8 @@ import 'app_theme.dart';
 import 'app_state.dart';
 import 'home_page.dart';
 import 'fox_avatar.dart';
+import 'page_transitions.dart';
+import 'shiny_logo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -97,9 +99,9 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(
+        slideFadeRoute(
           settings: const RouteSettings(name: '/home'),
-          builder: (context) => const HomePage(),
+          page: const HomePage(),
         ),
       );
     }
@@ -114,18 +116,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.asset(
-              'assets/AAST.png',
-              height: 70,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.school,
-                  color: Colors.white,
-                  size: 56,
-                );
-              },
-            ),
+            const ShinyLogo(height: 70, fallbackSize: 56),
             const SizedBox(height: 12),
             const Text(
               'Welcome Back',

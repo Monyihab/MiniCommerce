@@ -5,6 +5,7 @@ import 'app_state.dart';
 import 'checkout_page.dart';
 import 'welcome_page.dart';
 import 'glass_dialog.dart';
+import 'page_transitions.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -94,7 +95,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const WelcomePage()),
+      slideFadeRoute(
+        page: const WelcomePage(),
+        fromLeft: true,
+      ),
       (route) => false,
     );
   }
@@ -216,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _openCart() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CheckoutPage()),
+      slideFadeRoute(page: const CheckoutPage()),
     );
   }
 
