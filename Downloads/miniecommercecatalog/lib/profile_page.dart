@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 import 'app_theme.dart';
 import 'app_state.dart';
 import 'checkout_page.dart';
 import 'welcome_page.dart';
 import 'glass_dialog.dart';
+import 'glass_sheet.dart';
 import 'page_transitions.dart';
 import 'app_snackbar.dart';
+import 'shiny_logo.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -102,73 +103,78 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showOrders() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Your Orders',
-                style: TextStyle(
-                  color: navy,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (orderHistory.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text(
-                    'You have not placed any orders yet.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              else
-                Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: orderHistory
-                        .map(
-                          (o) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(
-                              Icons.receipt_long_outlined,
-                              color: red,
-                            ),
-                            title: Text(
-                              o.number,
-                              style: const TextStyle(
-                                color: navy,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text('${o.itemCount} items'),
-                            trailing: Text(
-                              egp(o.total),
-                              style: const TextStyle(
-                                color: red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-            ],
+  Widget _orderRow(OrderSummary o) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: glassDecoration(radius: 20, alpha: 0.14),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.22),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+            ),
+            child: const Icon(
+              Icons.receipt_long_outlined,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
-        ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  o.number,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${o.itemCount} items',
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            egp(o.total),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  void _showOrders() {
+    showGlassSheet<void>(
+      context,
+      title: 'Your Orders',
+      child: orderHistory.isEmpty
+          ? const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'You have not placed any orders yet.',
+                style: TextStyle(color: Colors.white70, fontSize: 15),
+              ),
+            )
+          : ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: orderHistory.map(_orderRow).toList(),
+            ),
     );
   }
 
@@ -292,25 +298,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return GlassPage(
       maxWidth: 600,
-      titleWidget: Row(
+      titleWidget: const Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Image.asset(
-              'assets/AAST.png',
-              height: 28,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.school, color: kPink, size: 28);
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Flexible(
+          ShinyLogo(height: 34, fallbackSize: 30, glowScale: 0.45),
+          SizedBox(width: 12),
+          Flexible(
             child: Text(
               'My Profile',
               maxLines: 1,

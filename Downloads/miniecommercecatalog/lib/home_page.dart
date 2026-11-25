@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'product.dart';
 import 'product_data.dart';
-import 'app_colors.dart';
 import 'app_state.dart';
 import 'product_image.dart';
 import 'details_page.dart';
@@ -15,6 +14,7 @@ import 'app_theme.dart';
 import 'page_transitions.dart';
 import 'guide_message.dart';
 import 'app_snackbar.dart';
+import 'glass_sheet.dart';
 
 const Color _pink = Color(0xFFFF1744);
 const Color _deepRed = Color(0xFFB30B27);
@@ -300,48 +300,73 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _showSortSheet() {
-    const options = ['Default', 'Price: Low to High', 'Price: High to Low'];
+  Widget _sortOption(int index, String label) {
+    final selected = _sort == index;
 
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          setState(() {
+            _sort = index;
+          });
+          Navigator.pop(context);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: selected ? 0.26 : 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: selected ? 0.8 : 0.25),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
                 child: Text(
-                  'Sort by',
+                  label,
                   style: TextStyle(
-                    color: navy,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
                   ),
                 ),
               ),
-            ),
-            for (var i = 0; i < options.length; i++)
-              ListTile(
-                title: Text(options[i]),
-                trailing:
-                    _sort == i ? const Icon(Icons.check, color: red) : null,
-                onTap: () {
-                  setState(() {
-                    _sort = i;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-            const SizedBox(height: 8),
-          ],
+              if (selected)
+                Container(
+                  width: 26,
+                  height: 26,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    color: _pink,
+                    size: 18,
+                  ),
+                ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void _showSortSheet() {
+    const options = ['Default', 'Price: Low to High', 'Price: High to Low'];
+
+    showGlassSheet<void>(
+      context,
+      title: 'Sort by',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < options.length; i++) _sortOption(i, options[i]),
+        ],
       ),
     );
   }

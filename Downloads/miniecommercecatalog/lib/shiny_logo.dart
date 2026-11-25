@@ -27,6 +27,7 @@ class ShinyLogo extends StatefulWidget {
   final Duration interval;
   final Color glowColor;
   final Color glowCoreColor;
+  final double glowScale;
 
   const ShinyLogo({
     super.key,
@@ -36,6 +37,7 @@ class ShinyLogo extends StatefulWidget {
     this.interval = const Duration(milliseconds: 1500),
     this.glowColor = const Color(0xFF1F5BFF),
     this.glowCoreColor = const Color(0xFF5C9DFF),
+    this.glowScale = 1.0,
   });
 
   @override
@@ -104,12 +106,14 @@ class _ShinyLogoState extends State<ShinyLogo>
     required double sigma,
     required double opacity,
   }) {
+    final s = math.max(0.6, sigma * widget.glowScale);
+
     return Opacity(
       opacity: opacity.clamp(0.0, 1.0).toDouble(),
       child: ImageFiltered(
         imageFilter: ui.ImageFilter.blur(
-          sigmaX: sigma,
-          sigmaY: sigma,
+          sigmaX: s,
+          sigmaY: s,
           tileMode: TileMode.decal,
         ),
         child: ColorFiltered(
